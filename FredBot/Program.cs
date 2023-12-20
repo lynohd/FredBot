@@ -11,7 +11,7 @@ await Host
     .CreateDefaultBuilder()
     .UseSerilog()
     .UseConsoleLifetime()
-    .ConfigureHostConfiguration(x =>x.AddUserSecrets(assembly).Build())
+    .ConfigureHostConfiguration(x => x.AddUserSecrets(assembly).AddJsonFile("appsettings.json", true, true).Build())
     .ConfigureServices((ctx, services) =>
     {
         Log.Logger = new LoggerConfiguration()

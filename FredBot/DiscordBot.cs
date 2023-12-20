@@ -22,6 +22,7 @@ public class DiscordBot : IHostedService
         _commands = _client.GetCommandsNext();
         _commands.RegisterCommands(Assembly.GetExecutingAssembly());
         _commands.RegisterConverter(new CustomArgumentConverter());
+        
         _logger = logger;
         _mediator = mediator;
         RegisterEventHandlers();
