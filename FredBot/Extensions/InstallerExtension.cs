@@ -5,32 +5,61 @@ using FredBot.Installers;
 using Serilog;
 
 namespace FredBot.Extensions;
+public class InstallOrder
+{
+    public int Value { get; set; }
 
+}
 public static class InstallerExtension
 {
     private static Serilog.ILogger Logger = Log.Logger;
 
-    public static void Install(this IServiceCollection services, IConfiguration config, bool ordered = false, params Assembly[] assemblies) =>
+    [Obsolete("Use InstallWithLogger instead")]
+    public static void Install(this IServiceCollection services, IConfiguration config, bool ordered = false, params Assembly[] assemblies)
+    {
+        int order = 0;
         assemblies
             .SelectMany(x => x.DefinedTypes)
             .Where(IsValidInstaller)
-            .Where(HasAttribute<InstallerAttribute>)
+            .Where(HasAttribute)
             .Where(IsEnabled)
-            .OrderByDescending(x => GetAttribute<InstallerAttribute>(x).Priority)
+            .OrderByDescending(x => { return order = GetAttribute<InstallerAttribute>(x).Priority; })
             .Select(Activator.CreateInstance)
             .Cast<IServiceInstaller>()
             .ToList()
-            .ForEach(installer => {
-                installer?.Install(services, config);
+            .ForEach(installer =>
+            {
+                installer?.Install(services, config, ref order);
                 Logger?.Information("Running Installer {Service}", installer.GetType());
             });
-    
+    }
+
+    public static void InstallWithLogger(this IServiceCollection services, IConfiguration config, bool ordered = false, params Assembly[] assemblies)
+    {
+        int order = 0;
+        assemblies
+            .SelectMany(x => x.DefinedTypes)
+            .Where(IsValidInstaller)
+            .Where(HasAttribute)
+            .Where(IsEnabled)
+            .OrderByDescending(x =>
+            {
+                return order = GetAttribute<InstallerAttribute>(x).Priority;
+            })
+            .Select(type =>
+            {
+                return ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), type.AsType());
+            })
+            .Cast<IServiceInstaller>()
+            .ToList()
+            .ForEach(installer => installer?.Install(services, config, ref order));
+    }
 
     static bool IsValidInstaller(TypeInfo info) =>
         info.IsAssignableTo(typeof(IServiceInstaller)) == true && info.IsInterface == false;
 
-    static bool HasAttribute<TAttribute>(TypeInfo info) where TAttribute : Attribute =>
-        GetAttribute<TAttribute>(info) != null;
+    static bool HasAttribute(TypeInfo info) =>
+        GetAttribute<InstallerAttribute>(info) != null;
     
     static TAttribute GetAttribute<TAttribute>(TypeInfo info) where TAttribute : Attribute =>
         info.GetCustomAttribute<TAttribute>();

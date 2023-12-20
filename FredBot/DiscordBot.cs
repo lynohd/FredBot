@@ -7,7 +7,7 @@ using FredBot.Commands.Converters;
 using FredBot.Events.ClientEvents.Messages;
 using FredBot.Events.CommandsEvents.Messages;
 
-namespace FredBot.Services;
+namespace FredBot;
 
 public class DiscordBot : IHostedService
 {
@@ -30,11 +30,11 @@ public class DiscordBot : IHostedService
     private void RegisterEventHandlers()
     {
         _client.ComponentInteractionCreated += (sender, args) => _mediator.Publish(new OnComponentInteract(sender, args));
-        _client.GuildAvailable              += (sender, args) => _mediator.Publish(new OnDiscordGuildAvailable(sender, args));
-        _client.MessageCreated              += (sender, args) =>
+        _client.GuildAvailable += (sender, args) => _mediator.Publish(new OnDiscordGuildAvailable(sender, args));
+        _client.MessageCreated += (sender, args) =>
         {
             //prevent recursion
-            if(args.Author == sender.CurrentUser)
+            if (args.Author == sender.CurrentUser)
                 return Task.CompletedTask;
 
             return _mediator.Publish(new OnDiscordMessageCreated(sender, args));

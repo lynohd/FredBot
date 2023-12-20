@@ -4,6 +4,7 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
+using FredBot;
 using FredBot.Attributes;
 using FredBot.Commands.Converters;
 using FredBot.Extensions;
@@ -17,11 +18,18 @@ public class DiscordInstaller : IServiceInstaller
 {
 
     const string DEFAULT_PREFIX = "!";
-    private static Serilog.ILogger Logger = Log.Logger;
-    public void Install(IServiceCollection services, IConfiguration config)
+    private readonly ILogger<DiscordInstaller> _logger;
+    public DiscordInstaller(ILogger<DiscordInstaller> logger)
+    {
+        _logger = logger;
+    }
+
+    public void Install(IServiceCollection services, IConfiguration config, ref readonly int order)
     {
         services.AddSingleton<LeagueCustomsService>();
-        var prefix = config["Prefix"] ?? DEFAULT_PREFIX;
+
+        var prefix = config["Discord:Prefix"] ?? DEFAULT_PREFIX;
+        _logger.LogInformation("Prefix: {Prefix}", prefix);
         var client = new DiscordClient(new DiscordConfiguration()
         {
             LoggerFactory = new LoggerFactory().AddSerilog(),

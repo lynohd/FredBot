@@ -20,7 +20,8 @@ await Host
 
         services.AddMediatR(x => x.RegisterServicesFromAssembly(assembly));
         services.AddLogging(x => x.ClearProviders().AddSerilog());
-        services.Install(config: ctx.Configuration, ordered: true,assemblies: assembly);
+        services.InstallWithLogger(ctx.Configuration, ordered: false,  assembly);
+        //services.Install(config: ctx.Configuration, ordered: true,assemblies: assembly);
     })
     .RunConsoleAsync();
 await Log.CloseAndFlushAsync();
