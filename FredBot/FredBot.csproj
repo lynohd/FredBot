@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishAot>false</PublishAot>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UserSecretsId>91cad3a3-3545-4170-b32a-2c20dd726e96</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appconfig.json" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DSharpPlus" Version="5.0.0-nightly-01907" />
+		<PackageReference Include="DSharpPlus.CommandsNext" Version="5.0.0-nightly-01907" />
+		<PackageReference Include="DSharpPlus.Interactivity" Version="5.0.0-nightly-01907" />
+		<PackageReference Include="DSharpPlus.Rest" Version="5.0.0-nightly-01907" />
+		<PackageReference Include="DSharpPlus.SlashCommands" Version="5.0.0-nightly-01907" />
+		<PackageReference Include="DSharpPlus.VoiceNext" Version="5.0.0-nightly-01907" />
+		<PackageReference Include="DSharpPlus.VoiceNext.Natives" Version="1.0.0" />
+		<PackageReference Include="MediatR" Version="12.2.0" />
+
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+		<PackageReference Include="Serilog" Version="3.1.1" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Events\ClientEvents\CustomHandlers\" />
+	  <Folder Include="Events\CommandsEvents\CustomHandlers\" />
+	  <Folder Include="Events\CommandsEvents\Handlers\" />
+	</ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
+</Project>
