@@ -6,6 +6,7 @@ using System.Diagnostics;
 using FredBot.Commands.Converters;
 using FredBot.Events.ClientEvents.Messages;
 using FredBot.Events.CommandsEvents.Messages;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FredBot.Services;
 
@@ -41,27 +42,16 @@ public class DiscordBot : IHostedService
             return _mediator.Publish(new OnDiscordMessageCreated(sender, args));
         };
 
+
         _commands.CommandErrored += (ext, args) =>
         {
             _mediator.Publish(new OnCommandError(ext, args));
             _logger.LogInformation("CommandErrored: {User} {Args}", args.Context.User, args.Command);
             return Task.CompletedTask;
         };
-
         _commands.CommandExecuted += (ext, args) =>
         {
             _mediator.Publish(new OnCommandExecuted(ext, args));
-            _client.MessageCreated += (sender, args) => _mediator.Publish(new OnDiscordMessageCreated(sender, args));
-            return Task.CompletedTask;
-        };
-
-        _commands.CommandErrored += (_, args) =>
-        { 
-            _logger.LogInformation("CommandErrored: {User} {Args}", args.Context.User, args.Command);
-            return Task.CompletedTask;
-        };
-        _commands.CommandExecuted += (_, args) =>
-        {
             _logger.LogInformation("{User} Executed Command: {Args}", args.Context.User, args.Command);
             return Task.CompletedTask;
         };
