@@ -19,7 +19,6 @@ public class AdminCommands : BaseCommandModule
     {
         _logger = logger;
         _customsService = customsService;
-        Console.WriteLine(Guid.NewGuid());
     }
 
     public override Task BeforeExecutionAsync(CommandContext ctx)

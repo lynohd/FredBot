@@ -6,7 +6,7 @@ using FredBot.Extensions;
 
 namespace FredBot.Services;
 
-public class LeagueCustomsService/*(ILogger<LeagueCustomsService> logger)*/
+public class LeagueCustomsService(ILogger<LeagueCustomsService> logger)
 {
     ulong TEAM1VC = 1095102384688074772;
     ulong TEAM2VC = 1095102436726804600;
@@ -21,12 +21,6 @@ public class LeagueCustomsService/*(ILogger<LeagueCustomsService> logger)*/
     List<DiscordMember>? team2;
     List<DiscordMember> _excluded = new();
 
-    private readonly ILogger<LeagueCustomsService> logger;
-    public LeagueCustomsService(ILogger<LeagueCustomsService> logger)
-    {
-        this.logger = logger;
-        Console.WriteLine("service: " + Guid.NewGuid());
-    }
 
     public async Task MergeChannels(DiscordGuild guild)
     {
