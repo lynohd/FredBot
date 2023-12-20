@@ -5,14 +5,14 @@ namespace FredBot.Events.ClientEvents.Handlers;
 
 public class DiscordMessageHandler : INotificationHandler<OnDiscordMessageCreated>
 {
-    public async Task Handle(OnDiscordMessageCreated notification, CancellationToken cancellationToken)
+    public Task Handle(OnDiscordMessageCreated notification, CancellationToken cancellationToken)
     {
         var args = notification.Args;
         var sender = notification.Sender;
         var guild = args.Guild;
         var message = args.Message;
 
-        return;
+        return Task.CompletedTask;
 
         //if(guild.Id == 846917454533754910)
         //    return;

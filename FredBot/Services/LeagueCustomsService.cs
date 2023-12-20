@@ -8,18 +8,18 @@ namespace FredBot.Services;
 
 public class LeagueCustomsService(ILogger<LeagueCustomsService> logger)
 {
-    ulong TEAM1VC = 1095102384688074772;
-    ulong TEAM2VC = 1095102436726804600;
+    readonly ulong TEAM1VC = 1095102384688074772;
+    readonly ulong TEAM2VC = 1095102436726804600;
 #if !TESTING
     ulong TEXT_CHANNEL = 1185724161444806687;
 #else
-    ulong TEXT_CHANNEL = 761587351469424714;
+    readonly ulong TEXT_CHANNEL = 761587351469424714;
 #endif
-    ulong LOBBY_VC = 1095102384688074772;
+    readonly ulong LOBBY_VC = 1095102384688074772;
 
     List<DiscordMember>? team1;
     List<DiscordMember>? team2;
-    List<DiscordMember> _excluded = new();
+    readonly List<DiscordMember> _excluded = [];
 
 
     public async Task MergeChannels(DiscordGuild guild)
@@ -49,6 +49,7 @@ public class LeagueCustomsService(ILogger<LeagueCustomsService> logger)
     }
     public async Task IncludeMember(DiscordMessage message, DiscordMember member)
     {
+
         if(_excluded.Contains(member))
         {
             _excluded.Remove(member);
@@ -60,8 +61,13 @@ public class LeagueCustomsService(ILogger<LeagueCustomsService> logger)
     {
         if(team1 is null || team2 is null)
             return;
-        team1.ForEach(x => x.PlaceInAsync(guild.GetChannel(TEAM1VC)));
-        team2.ForEach(x => x.PlaceInAsync(guild.GetChannel(TEAM2VC)));
+
+        List<Task> tasks =
+        [
+            .. team1.Select(x => x.PlaceInAsync(guild.GetChannel(TEAM1VC))),
+            .. team2.Select(x => x.PlaceInAsync(guild.GetChannel(TEAM2VC))),
+        ];
+        await Task.WhenAll(tasks);
     }
 
     public async Task RandomizeTeams(DiscordMember member, DiscordMessage message, bool silent = true)
@@ -133,23 +139,23 @@ public class LeagueCustomsService(ILogger<LeagueCustomsService> logger)
 
 
     static readonly DiscordButtonComponent[] Buttons1 =
-    {
-        new DiscordButtonComponent(ButtonStyle.Success, "btn_randomize", "Make Teams"),
-        new DiscordButtonComponent(ButtonStyle.Danger, "btn_merge", "Merge VCs"),
-        new DiscordButtonComponent(ButtonStyle.Danger, "btn_massmove", "Mass Move", true),
-    };
+    [
+        new(ButtonStyle.Success, "btn_randomize", "Make Teams"),
+        new(ButtonStyle.Danger, "btn_merge", "Merge VCs"),
+        new(ButtonStyle.Danger, "btn_massmove", "Mass Move", true),
+    ];
 
     static readonly DiscordButtonComponent[] Buttons2 =
-    {
-        new DiscordButtonComponent(ButtonStyle.Primary, "btn_exclude", "Exclude User"),
-        new DiscordButtonComponent(ButtonStyle.Primary, "btn_include", "Include User"),
-    };
+    [
+        new(ButtonStyle.Primary, "btn_exclude", "Exclude User"),
+        new(ButtonStyle.Primary, "btn_include", "Include User"),
+    ];
 
     static readonly DiscordButtonComponent[] Buttons3 =
-    {
-        new DiscordButtonComponent(ButtonStyle.Primary, "btn_split", "Split VCs"),
-        new DiscordButtonComponent(ButtonStyle.Danger, "btn_delete", "Delete"),
-    };
+    [
+        new(ButtonStyle.Primary, "btn_split", "Split VCs"),
+        new(ButtonStyle.Danger, "btn_delete", "Delete"),
+    ];
 
     public async Task Setup(DiscordGuild guild)
     {
@@ -222,10 +228,5 @@ public class LeagueCustomsService(ILogger<LeagueCustomsService> logger)
             default:
             break;
         }
-    }
-
-    public async Task SelectExcludeMember()
-    {
-
     }
 }

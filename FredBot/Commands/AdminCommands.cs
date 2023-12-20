@@ -9,17 +9,9 @@ namespace FredBot.Commands;
 
 
 [ModuleLifespan(ModuleLifespan.Singleton)]
-public class AdminCommands : BaseCommandModule
+public class AdminCommands(ILogger<AdminCommands> logger, LeagueCustomsService customsService) : BaseCommandModule
 {
-    private readonly LeagueCustomsService _customsService;
-    private readonly ILogger<AdminCommands> _logger;
     private long StartTime;
-
-    public AdminCommands(ILogger<AdminCommands> logger, LeagueCustomsService customsService)
-    {
-        _logger = logger;
-        _customsService = customsService;
-    }
 
     public override Task BeforeExecutionAsync(CommandContext ctx)
     {
@@ -30,7 +22,7 @@ public class AdminCommands : BaseCommandModule
     public override Task AfterExecutionAsync(CommandContext ctx)
     {
         var time = Stopwatch.GetElapsedTime(StartTime).Milliseconds;
-        _logger.LogInformation("Command {Command} took {ms} Milliseconds to execute",ctx.Command.Name, time);
+        logger.LogInformation("Command {Command} took {ms} Milliseconds to execute",ctx.Command.Name, time);
         return base.AfterExecutionAsync(ctx);
     }
 
@@ -38,7 +30,7 @@ public class AdminCommands : BaseCommandModule
     [Command("setup")]
     public async Task SetupCommand(CommandContext ctx)
     {
-        await _customsService.Setup(ctx.Guild);
+        await customsService.Setup(ctx.Guild);
         await ctx.Message.DeleteAsync();
     }
 
@@ -47,7 +39,7 @@ public class AdminCommands : BaseCommandModule
     [Command("merge")]
     public async Task MergeCommand(CommandContext ctx)
     {
-        await _customsService.MergeChannels(ctx.Guild);
+        await customsService.MergeChannels(ctx.Guild);
     }
 
 
@@ -55,25 +47,25 @@ public class AdminCommands : BaseCommandModule
     public async Task ExcludeMember(CommandContext ctx, DiscordMember member)
     {
 
-        await _customsService.ExcludeMember(ctx.Message, member);
+        await customsService.ExcludeMember(ctx.Message, member);
     }
 
     [Command("include")]
     public async Task  IncludeMember(CommandContext ctx, DiscordMember member)
     {
-        await _customsService.IncludeMember(ctx.Message, member);
+        await customsService.IncludeMember(ctx.Message, member);
     }
 
     [Command("split")]
     public async Task SplitTeams(CommandContext ctx)
     {
-        await _customsService.SplitTeams(ctx.Guild);
+        await customsService.SplitTeams(ctx.Guild);
     }
 
     [Command("randomize")]
     public async Task RandomizeTeams(CommandContext ctx, bool silent = true)
     {
-        await _customsService.RandomizeTeams(ctx.Member, ctx.Message, silent);
+        await customsService.RandomizeTeams(ctx.Member, ctx.Message, silent);
     }
 
     [Command("moveall")]

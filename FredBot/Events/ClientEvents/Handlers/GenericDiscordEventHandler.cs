@@ -6,25 +6,19 @@ using MediatR;
 
 namespace FredBot.Events.ClientEvents.Handlers;
 
-public class GenericDiscordEventHandler : INotificationHandler<OnGenericDiscordMessage>
+public class GenericDiscordEventHandler(ILogger<GenericDiscordEventHandler> logger) : INotificationHandler<OnGenericDiscordMessage>
 {
-
-    readonly ILogger<GenericDiscordEventHandler> _logger;
-
-    public GenericDiscordEventHandler(ILogger<GenericDiscordEventHandler> logger)
+    public Task Handle(OnGenericDiscordMessage notification, CancellationToken cancellationToken)
     {
-        _logger = logger;
-    }
-
-    public async Task Handle(OnGenericDiscordMessage notification, CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("GenericDiscordEventHandler::{Message}", GetPropertyInfo(notification.Args));
+        logger.LogInformation("GenericDiscordEventHandler::{Message}", GetPropertyInfo(notification.Args));
 
 
         if (notification.Args is GuildCreateEventArgs args)
         {
             //_logger.LogInformation(args.Guild);
         }
+        return Task.CompletedTask;
+
     }
 
 
