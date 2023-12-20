@@ -6,7 +6,6 @@ using System.Diagnostics;
 using FredBot.Commands.Converters;
 using FredBot.Events.ClientEvents.Messages;
 using FredBot.Events.CommandsEvents.Messages;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FredBot.Services;
 
@@ -32,7 +31,6 @@ public class DiscordBot : IHostedService
     {
         _client.ComponentInteractionCreated += (sender, args) => _mediator.Publish(new OnComponentInteract(sender, args));
         _client.GuildAvailable              += (sender, args) => _mediator.Publish(new OnDiscordGuildAvailable(sender, args));
-
         _client.MessageCreated              += (sender, args) =>
         {
             //prevent recursion
