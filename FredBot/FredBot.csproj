@@ -23,7 +23,9 @@
 		<PackageReference Include="DSharpPlus.VoiceNext" Version="5.0.0-nightly-01907" />
 		<PackageReference Include="DSharpPlus.VoiceNext.Natives" Version="1.0.0" />
 		<PackageReference Include="MediatR" Version="12.2.0" />
-
+		
+		<PackageReference Include="Microsoft.FeatureManagement" />
+		<PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />

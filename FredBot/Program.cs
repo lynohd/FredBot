@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FredBot.Extensions;
 using FredBot.Services;
+using Microsoft.FeatureManagement;
 using Serilog;
 
 var assembly = Assembly.GetExecutingAssembly();
@@ -17,7 +18,7 @@ await Host
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();
-
+        services.AddFeatureManagement(ctx.Configuration.GetSection("Features"));
         services.AddMediatR(x => x.RegisterServicesFromAssembly(assembly));
         services.AddLogging(x => x.ClearProviders().AddSerilog());
         services.InstallServices(ctx.Configuration, assembly);

@@ -27,13 +27,17 @@ public class LeagueCustomsService(ILogger<LeagueCustomsService> logger)
         var channels = await guild.GetChannelsAsync();
         var vcs = channels.Where(x =>  x.Type == ChannelType.Voice && x.Id == TEAM1VC || x.Id == TEAM2VC);
 
-        foreach(var vc in vcs)
-        {
-            foreach(var member in vc.Users)
-            {
-                await member.PlaceInAsync(guild.GetChannel(LOBBY_VC));
-            }
-        }
+        var tasks = new TaskList() | vcs.SelectMany(x => x.Users.Select(x => x.PlaceInAsync(guild.GetChannel(LOBBY_VC))));
+
+        await tasks;
+
+        //foreach(var vc in vcs)
+        //{
+        //    foreach(var member in vc.Users)
+        //    {
+        //        await member.PlaceInAsync(guild.GetChannel(LOBBY_VC));
+        //    }
+        //}
     }
     public async Task ExcludeMember(DiscordMessage message, DiscordMember member)
     {
@@ -61,13 +65,11 @@ public class LeagueCustomsService(ILogger<LeagueCustomsService> logger)
     {
         if(team1 is null || team2 is null)
             return;
+        var tasks = new TaskList() 
+            | team1.Select(x => x.PlaceInAsync(guild.GetChannel(TEAM1VC)))
+            | team2.Select(x => x.PlaceInAsync(guild.GetChannel(TEAM2VC)));
 
-        List<Task> tasks =
-        [
-            .. team1.Select(x => x.PlaceInAsync(guild.GetChannel(TEAM1VC))),
-            .. team2.Select(x => x.PlaceInAsync(guild.GetChannel(TEAM2VC))),
-        ];
-        await Task.WhenAll(tasks);
+        await tasks;
     }
 
     public async Task RandomizeTeams(DiscordMember member, DiscordMessage message, bool silent = true)
