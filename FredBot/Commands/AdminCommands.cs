@@ -31,7 +31,7 @@ public class AdminCommands(ILogger<AdminCommands> logger, LeagueCustomsService c
     }
 
     [Command("test")]
-    [FeatureGate(requirementType: RequirementType.Any,"TestCommand")]
+    [FeatureGate(RequirementType.Any, "TestCommand", "t2")]
     [FeatureGateLogMessage("Its enabled", "its disabled", FeatureGateLogMessageAttribute.ResponseMode.Both)]
     public async Task Test(CommandContext ctx)
     {
