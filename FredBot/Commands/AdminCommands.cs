@@ -3,12 +3,16 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using FredBot.Attributes;
 using FredBot.Services;
+using Microsoft.FeatureManagement;
+using Microsoft.FeatureManagement.Mvc;
 
 namespace FredBot.Commands;
 
 
 [ModuleLifespan(ModuleLifespan.Singleton)]
+[DiscordFeatureFlags]
 public class AdminCommands(ILogger<AdminCommands> logger, LeagueCustomsService customsService) : BaseCommandModule
 {
     private long StartTime;
@@ -26,6 +30,13 @@ public class AdminCommands(ILogger<AdminCommands> logger, LeagueCustomsService c
         return base.AfterExecutionAsync(ctx);
     }
 
+    [Command("test")]
+    [FeatureGate(requirementType: RequirementType.Any,"TestCommand")]
+    [FeatureGateLogMessage("Its enabled", "its disabled", FeatureGateLogMessageAttribute.ResponseMode.Both)]
+    public async Task Test(CommandContext ctx)
+    {
+        await ctx.RespondAsync("hi");
+    }
 
     [Command("setup")]
     public async Task SetupCommand(CommandContext ctx)

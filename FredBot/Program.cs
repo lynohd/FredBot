@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using FredBot.Extensions;
+using FredBot.Features;
 using FredBot.Services;
 using Microsoft.FeatureManagement;
 using Serilog;
@@ -18,7 +19,9 @@ await Host
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();
-        services.AddFeatureManagement(ctx.Configuration.GetSection("Features"));
+        services.AddFeatureManagement(ctx.Configuration.GetSection("Features"))
+            .AddFeatureFilter<UserFilter>();
+
         services.AddMediatR(x => x.RegisterServicesFromAssembly(assembly));
         services.AddLogging(x => x.ClearProviders().AddSerilog());
         services.InstallServices(ctx.Configuration, assembly);
