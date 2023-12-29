@@ -33,6 +33,8 @@ public class FeatureGateLogMessageAttribute : Attribute
 
     public async Task Run(CommandContext ctx, bool enabled)
     {
+        Logger ??= ctx.Services.GetService<ILogger<FeatureGateLogMessageAttribute>>();
+
         if(_respondType == ResponseMode.None)
             return;
 
@@ -63,8 +65,6 @@ public class FeatureGateLogMessageAttribute : Attribute
 
     public async Task LogInformation (CommandContext ctx)
     {
-        Logger ??= ctx.Services.GetService<ILogger<FeatureGateLogMessageAttribute>>();
-
         Logger.LogInformation("Hi");
     }
 }

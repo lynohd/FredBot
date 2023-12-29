@@ -8,7 +8,7 @@ namespace FredBot.Commands.Converters;
 public class CustomArgumentConverter : IArgumentConverter<bool>
 {
     private readonly Serilog.ILogger _logger = Log.Logger;
-    public Task<Optional<bool>> ConvertAsync(string value, CommandContext ctx)
+    public Task<DSharpPlus.Entities.Optional<bool>> ConvertAsync(string value, CommandContext ctx)
     {
         _logger.Information("{Command} with Arguments[{Arguments}] is being handled by {className} ",ctx.Command, ctx.RawArgumentString, nameof(CustomArgumentConverter));
         if(bool.TryParse(value, out var @bool))

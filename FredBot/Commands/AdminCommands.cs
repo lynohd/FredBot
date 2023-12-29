@@ -32,10 +32,10 @@ public class AdminCommands(ILogger<AdminCommands> logger, LeagueCustomsService c
 
     [Command("test")]
     [FeatureGate(RequirementType.Any, "TestCommand", "t2")]
-    [FeatureGateLogMessage("Its enabled", "its disabled", FeatureGateLogMessageAttribute.ResponseMode.Both)]
+   //[FeatureGateLogMessage("Its enabled", "its disabled", FeatureGateLogMessageAttribute.ResponseMode.Both)]
     public async Task Test(CommandContext ctx)
     {
-        await ctx.RespondAsync("hi");
+        await ctx.Message.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":thumbsup"));
     }
 
     [Command("setup")]

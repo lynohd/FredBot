@@ -24,8 +24,8 @@
 		<PackageReference Include="DSharpPlus.VoiceNext.Natives" Version="1.0.0" />
 		<PackageReference Include="MediatR" Version="12.2.0" />
 		
-		<PackageReference Include="Microsoft.FeatureManagement" />
-		<PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
+		<PackageReference Include="Microsoft.FeatureManagement" Version="3.1.1" />
+		<PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="3.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
@@ -34,6 +34,7 @@
 		<PackageReference Include="Serilog" Version="3.1.1" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

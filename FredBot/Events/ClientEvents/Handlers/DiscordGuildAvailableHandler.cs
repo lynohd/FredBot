@@ -6,32 +6,57 @@ using MediatR;
 
 namespace FredBot.Events.ClientEvents.Handlers;
 
-public class DiscordGuildAvailableHandler(ILogger<DiscordGuildAvailableHandler> logger) : INotificationHandler<OnDiscordGuildAvailable>
+public class DiscordGuildAvailableHandler : INotificationHandler<OnDiscordGuildAvailable>
 {
-    const bool SCRAPE_PREVIOUS_MESSAGES = false;
+    public const bool SAFETY_SWITCH = true;
+    private readonly ILogger<DiscordGuildAvailableHandler> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly TimeGuessrService _service;
 
+    public DiscordGuildAvailableHandler(
+        ILogger<DiscordGuildAvailableHandler> logger,
+        IConfiguration configuration,
+        TimeGuessrService service)
+    {
+        _logger = logger;
+        _configuration = configuration;
+        _service = service;
+    }
+
+
+    //Guild ID, Channel ID
+    Dictionary<ulong, ulong> Guilds = new Dictionary<ulong, ulong>() 
+    {
+        {761587351469424710, 761587351469424714} /* Test Server*/,
+        {846917454533754910, 1169708733077671996 /*Freds*/}
+    };
 
     public async Task Handle(OnDiscordGuildAvailable notification, CancellationToken cancellationToken)
     {
         var args = notification.Args;
 
-        logger.LogInformation("GuildAvailable {Guild}", args.Guild);
+        _logger.LogInformation("GuildAvailable {Guild}", args.Guild);
 
         var started = Stopwatch.GetTimestamp();
+        var enabled = _configuration.GetValue<bool>("Discord:Scraping:Enabled");
 
-        DiscordMessageThing message = new();
 
-        if (SCRAPE_PREVIOUS_MESSAGES)
+        if(enabled && SAFETY_SWITCH)
         {
-            if (args.Guild.Id == 846917454533754910)
+            if(Guilds.ContainsKey(args.Guild.Id))
             {
-                var ch = args.Guild.GetChannel(1169708733077671996);
-                var msgs = await message.GetPreviousMessagesStartsWith(ch, 20, "TimeGuessr");
-                logger.LogInformation("count {count}", msgs.Count);
+                DiscordMessageScraper scraper = new();
+                var ch = args.Guild.GetChannel(Guilds[args.Guild.Id]);
+                var lastMsg = await scraper.GetLastMessage(ch);
+                var messages = await Task.Run(async () => await scraper.GetAllMessagesAsync(ch, lastMsg.Id), cancellationToken);
+
+                var timeguessrMessages = messages.Where(x => x.Content.StartsWith("TimeGuessr")).ToList();
+
+                _logger.LogInformation("Found {Amount} TimeGuessr Entries in {Guild}", timeguessrMessages.Count, args.Guild);
             }
         }
 
-        logger.LogInformation("{Handler} for {Guild} took {Seconds} seconds to complete",
+        _logger.LogInformation("{Handler} for {Guild} took {Seconds} seconds to complete",
             nameof(DiscordGuildAvailableHandler),
             args.Guild.Name,
             Stopwatch.GetElapsedTime(started).Seconds);
